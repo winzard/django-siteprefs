@@ -94,6 +94,8 @@ class PrefProxy(object):
     def __repr__(self):
         return '%s = %s' % (self.name, self.get_value())
 
+    def __unicode__(self):
+        return u'%s' % self.get_value()
 
 def get_field_for_proxy(pref_proxy):
     """Returns a field object instance for a given PrefProxy object."""
@@ -166,6 +168,7 @@ def get_pref_model_admin_class(prefs):
 
     cl_model_admin_dict = {
         'has_add_permission': lambda *args: False,
+        'has_change_permission': lambda *args: True,
         'has_delete_permission': lambda *args: False
     }
 
