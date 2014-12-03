@@ -44,3 +44,6 @@ msgstr "Настройка"
 #: models.py:50 utils.py:126
 msgid "Preferences"
 msgstr "Настройки"
+
+msgid "Preferences object"
+msgstr "Настройки сайта"

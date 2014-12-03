@@ -14,6 +14,8 @@ class Preference(models.Model):
     def __str__(self):
         return '%s:%s' % (self.app, self.name)
 
+    def __unicode__(self):
+        return u'%s:%s' % (self.app, self.name)
     @classmethod
     def read_prefs(cls, mem_prefs):
         """Initializes preferences entries in DB according to currently discovered prefs."""

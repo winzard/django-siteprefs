@@ -127,6 +127,7 @@ def get_pref_model_class(app, prefs, get_prefs_func):
                 'verbose_name': _('Preference'),
                 'verbose_name_plural': _('Preferences')
             })
+
     }
 
     for field_name, val_proxy in prefs.items():
@@ -134,6 +135,7 @@ def get_pref_model_class(app, prefs, get_prefs_func):
 
     try:  # Make Django 1.7 happy.
         model = type('Preferences', (models.Model,), model_dict)
+        model.__unicode__ = uni
     except RuntimeError:
         return None
 
@@ -151,6 +153,8 @@ def get_pref_model_class(app, prefs, get_prefs_func):
 
     return model
 
+def uni(self):
+    return _('Site Preferences')
 
 def get_pref_model_admin_class(prefs):
     by_category = OrderedDict()
@@ -184,7 +188,6 @@ def get_pref_model_admin_class(prefs):
     model = type('PreferencesAdmin', (admin.ModelAdmin,), cl_model_admin_dict)
     model.changelist_view = lambda self, request, **kwargs: self.change_view(request, '', **kwargs)
     model.get_object = lambda self, *args: self.model(**{field_name: val_proxy.get_value() for field_name, val_proxy in self.model._get_prefs(self.model._prefs_app).items()})
-
     return model
 
 
