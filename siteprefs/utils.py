@@ -125,7 +125,8 @@ def get_pref_model_class(app, prefs, get_prefs_func):
             '__module__': '%s.%s' % (app, PREFS_MODULE_NAME),
             'Meta': type('Meta', (models.options.Options,), {
                 'verbose_name': _('Preference'),
-                'verbose_name_plural': _('Preferences')
+                'verbose_name_plural': _('Preferences'),
+                'app_label': 'main'
             })
 
     }
@@ -136,6 +137,8 @@ def get_pref_model_class(app, prefs, get_prefs_func):
     try:  # Make Django 1.7 happy.
         model = type('Preferences', (models.Model,), model_dict)
         model.__unicode__ = uni
+
+
     except RuntimeError:
         return None
 
