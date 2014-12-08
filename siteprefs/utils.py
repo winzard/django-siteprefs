@@ -1,8 +1,11 @@
 import os
 import inspect
 from collections import OrderedDict
+from django.contrib.admin import ModelAdmin
+from django.core.urlresolvers import reverse
 
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.importlib import import_module as import_module_
 from django.utils.module_loading import module_has_submodule
@@ -159,6 +162,15 @@ def get_pref_model_class(app, prefs, get_prefs_func):
 def uni(self):
     return _('Site Preferences')
 
+def this_response_change(self, request, obj):
+        """ if user clicked "edit this page", return back to main site """
+        response = super(type(self), self).response_change(request, obj)
+        if '_continue' not in request.POST:
+            return HttpResponseRedirect(reverse('admin:index'))
+        else:
+            return response
+
+
 def get_pref_model_admin_class(prefs):
     by_category = OrderedDict()
     readonly_fields = []
@@ -191,6 +203,7 @@ def get_pref_model_admin_class(prefs):
     model = type('PreferencesAdmin', (admin.ModelAdmin,), cl_model_admin_dict)
     model.changelist_view = lambda self, request, **kwargs: self.change_view(request, '', **kwargs)
     model.get_object = lambda self, *args: self.model(**{field_name: val_proxy.get_value() for field_name, val_proxy in self.model._get_prefs(self.model._prefs_app).items()})
+
     return model
 
 
