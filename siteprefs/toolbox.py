@@ -5,7 +5,8 @@ from collections import OrderedDict
 from django.contrib import admin
 
 from .models import Preference
-from .utils import import_prefs, get_frame_locals, traverse_local_prefs, get_pref_model_admin_class, get_pref_model_class, PrefProxy, PatchedLocal, Frame
+from .utils import import_prefs, get_frame_locals, traverse_local_prefs, get_pref_model_admin_class, get_pref_model_class, PrefProxy, PatchedLocal, Frame, \
+    this_response_change
 from .exceptions import SitePrefsException
 from .signals import prefs_save
 from .settings import MANAGE_SAFE_COMMANDS
@@ -82,8 +83,10 @@ def register_admin_models(admin_site):
 
     for app_label, prefs_items in prefs.items():
         model_class = get_pref_model_class(app_label, prefs_items, get_app_prefs)
+        m = get_pref_model_admin_class(prefs_items)
+        m.response_change = this_response_change
         if model_class is not None:
-            admin_site.register(model_class, get_pref_model_admin_class(prefs_items))
+            admin_site.register(model_class, m)
 
 
 def autodiscover_siteprefs(admin_site=None):
